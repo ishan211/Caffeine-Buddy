@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drink Logger</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Drink Logger</h1>
+        <form id="drink-form">
+            <label for="drink">Drink:</label>
+            <select id="drink">
+                <option value="coffee">Coffee</option>
+                <option value="water">Water</option>
+                <option value="tea">Tea</option>
+                <option value="custom">Custom</option>
+            </select>
+            <div id="custom-drink-fields" class="hidden">
+                <label for="custom-name">Name:</label>
+                <input type="text" id="custom-name">
+                <label for="caffeine-content">Caffeine (mg):</label>
+                <input type="number" id="caffeine-content">
+            </div>
+            <label for="volume">Volume (ml):</label>
+            <input type="number" id="volume" required>
+            <button type="submit">Add Drink</button>
+        </form>
+        <canvas id="caffeine-chart"></canvas>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
