@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const customNameInput = document.getElementById("custom-name");
     const caffeineContentInput = document.getElementById("caffeine-content");
     const volumeInput = document.getElementById("volume");
+    const timeInput = document.getElementById("time");
     const ctx = document.getElementById('caffeine-chart').getContext('2d');
 
     // Chart.js initial configuration
@@ -66,19 +67,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const volume = parseFloat(volumeInput.value);
+        const time = timeInput.value;
         const totalCaffeine = (caffeineContent * volume) / 240; // Assuming 240ml as standard serving
 
-        logDrink(drinkName, volume, totalCaffeine);
+        logDrink(drinkName, volume, totalCaffeine, time);
         updateChart();
     });
 
-    function logDrink(name, volume, caffeine) {
+    function logDrink(name, volume, caffeine, time) {
         const now = new Date();
+        const drinkTime = new Date(`${now.toDateString()} ${time}`);
+
         const drink = {
             name,
             volume,
             caffeine,
-            time: now.getTime()
+            time: drinkTime.getTime()
         };
 
         let drinks = JSON.parse(localStorage.getItem("drinks")) || [];
