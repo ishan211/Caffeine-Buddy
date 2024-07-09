@@ -34,7 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     title: {
                         display: true,
                         text: 'Caffeine Concentration (mg/L)'
-                    }
+                    },
+                    suggestedMin: 0 // Ensure the y-axis starts at 0
                 }
             }
         }
@@ -100,12 +101,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         drinks.forEach(drink => {
             const drinkTime = new Date(drink.time);
+            const drinkHour = drinkTime.getHours();
             const hoursSinceDrink = (now - drinkTime) / (1000 * 60 * 60); // Time difference in hours
 
-            for (let i = Math.floor(hoursSinceDrink); i < hoursInDay; i++) {
-                const hoursElapsed = i - hoursSinceDrink;
-                const caffeineLeft = drink.caffeine * Math.pow(0.5, hoursElapsed / caffeineHalfLife);
-                concentrations[i] += caffeineLeft;
+            for (let i = 0; i < hoursInDay; i++) {
+                if (i <= drinkHour) {
+                    const hoursElapsed = drinkHour - i;
+                    const caffeineLeft = drink.caffeine * Math.pow(0.5, hoursElapsed / caffeineHalfLife);
+                    concentrations[i] += caffeineLeft;
+                }
             }
         });
 
