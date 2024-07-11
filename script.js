@@ -11,12 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const drinksUL = document.getElementById("drinks-ul");
     const clearListButton = document.getElementById("clear-list");
     const ctx = document.getElementById('caffeine-chart').getContext('2d');
+    const currentCaffeineValue = document.getElementById('current-caffeine-value');
 
     // Chart.js initial configuration
     let caffeineChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+            labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
             datasets: [{
                 label: 'Caffeine Concentration (mg/L)',
                 data: new Array(24).fill(0),
@@ -78,6 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
         logDrink(drinkName, volume, totalCaffeine, time);
         updateChart();
         updateDrinkList(); // Update the drink list when a new drink is added
+        updateCurrentCaffeine();
     });
 
     toggleListButton.addEventListener("click", () => {
@@ -93,6 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.removeItem("drinks");
         updateDrinkList(); // Update the drink list to reflect removal of all drinks
         resetChart(); // Reset the chart after clearing all drinks
+        updateCurrentCaffeine();
     });
 
     function logDrink(name, volume, caffeine, time) {
@@ -103,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
             name,
             volume,
             caffeine,
-            time: drinkTime.getTime()
+            time: drinkTime.getTime() // Store as timestamp
         };
 
         let drinks = JSON.parse(localStorage.getItem("drinks")) || [];
@@ -137,7 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function resetChart() {
-        localStorage.removeItem("drinks");
         caffeineChart.data.datasets[0].data.fill(0);
         caffeineChart.update();
     }
@@ -156,18 +158,36 @@ document.addEventListener("DOMContentLoaded", () => {
             removeButton.textContent = "Remove";
             removeButton.classList.add("remove-button");
             removeButton.addEventListener("click", () => {
-                drinks.splice(index, 1); // Remove the drink from the array
-                localStorage.setItem("drinks", JSON.stringify(drinks)); // Update local storage
+                let drinks = JSON.parse(localStorage.getItem("drinks")) || [];
+                drinks.splice(index, 1);
+                localStorage.setItem("drinks", JSON.stringify(drinks));
                 updateDrinkList(); // Update the displayed list
                 updateChart(); // Update the chart after removing a drink
+                updateCurrentCaffeine(); // Update current caffeine after removing a drink
             });
-            
+
             listItem.appendChild(removeButton);
             drinksUL.appendChild(listItem);
         });
-
-        // Show or hide the clear list button based on whether there are logged drinks
-        clearListButton.style.display = drinks.length > 0 ? "block" : "none";
     }
 
-    // Initialize chart and drink
+    function updateCurrentCaffeine() {
+        const drinks = JSON.parse(localStorage.getItem("drinks")) || [];
+        const now = new Date();
+        let totalCaffeine = 0;
+
+        drinks.forEach(drink => {
+            const drinkTime = new Date(drink.time);
+            const hoursSinceDrink = (now - drinkTime) / (1000 * 60 * 60); // Time difference in hours
+            const caffeineLeft = drink.caffeine * Math.pow(0.5, hoursSinceDrink / caffeineHalfLife);
+            totalCaffeine += caffeineLeft;
+        });
+
+        currentCaffeineValue.textContent = totalCaffeine.toFixed(2);
+    }
+
+    // Initial call to display drinks and update chart when page is loaded
+    updateDrinkList();
+    updateChart();
+    updateCurrentCaffeine();
+});
