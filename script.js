@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const caffeineContentInput = document.getElementById("caffeine-content");
     const volumeInput = document.getElementById("volume");
     const timeInput = document.getElementById("time");
+    const resetButton = document.getElementById("reset-button");
     const ctx = document.getElementById('caffeine-chart').getContext('2d');
 
     // Chart.js initial configuration
@@ -75,6 +76,11 @@ document.addEventListener("DOMContentLoaded", () => {
         updateChart();
     });
 
+    resetButton.addEventListener("click", () => {
+        localStorage.removeItem("drinks");
+        resetChart();
+    });
+
     function logDrink(name, volume, caffeine, time) {
         const now = new Date();
         const drinkTime = new Date(`${now.toDateString()} ${time}`);
@@ -114,6 +120,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         caffeineChart.data.datasets[0].data = concentrations;
+        caffeineChart.update();
+    }
+
+    function resetChart() {
+        localStorage.removeItem("drinks");
+        caffeineChart.data.datasets[0].data.fill(0);
         caffeineChart.update();
     }
 
