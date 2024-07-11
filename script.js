@@ -6,7 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const caffeineContentInput = document.getElementById("caffeine-content");
     const volumeInput = document.getElementById("volume");
     const timeInput = document.getElementById("time");
-    const resetButton = document.getElementById("reset-button");
+    const toggleListButton = document.getElementById("toggle-list");
+    const drinkListSection = document.getElementById("drink-list");
+    const drinksUL = document.getElementById("drinks-ul");
+    const clearListButton = document.getElementById("clear-list");
     const ctx = document.getElementById('caffeine-chart').getContext('2d');
 
     // Chart.js initial configuration
@@ -74,11 +77,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         logDrink(drinkName, volume, totalCaffeine, time);
         updateChart();
+        updateDrinkList(); // Update the drink list when a new drink is added
     });
 
-    resetButton.addEventListener("click", () => {
+    toggleListButton.addEventListener("click", () => {
+        drinkListSection.classList.toggle("hidden");
+        if (!drinkListSection.classList.contains("hidden")) {
+            toggleListButton.textContent = "Hide List";
+        } else {
+            toggleListButton.textContent = "Show List";
+        }
+    });
+
+    clearListButton.addEventListener("click", () => {
         localStorage.removeItem("drinks");
-        resetChart();
+        updateDrinkList(); // Update the drink list to reflect removal of all drinks
+        resetChart(); // Reset the chart after clearing all drinks
     });
 
     function logDrink(name, volume, caffeine, time) {
@@ -110,12 +124,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const drinkHour = drinkTime.getHours();
             const hoursSinceDrink = (now - drinkTime) / (1000 * 60 * 60); // Time difference in hours
 
-            for (let i = 0; i < hoursInDay; i++) {
-                if (i <= drinkHour) {
-                    const hoursElapsed = drinkHour - i;
-                    const caffeineLeft = drink.caffeine * Math.pow(0.5, hoursElapsed / caffeineHalfLife);
-                    concentrations[i] += caffeineLeft;
-                }
+            // Accumulate concentrations forward from drink time to end of day
+            for (let i = drinkHour; i < hoursInDay; i++) {
+                const hoursElapsed = i - drinkHour;
+                const caffeineLeft = drink.caffeine * Math.pow(0.5, hoursElapsed / caffeineHalfLife);
+                concentrations[i] += caffeineLeft;
             }
         });
 
@@ -129,6 +142,32 @@ document.addEventListener("DOMContentLoaded", () => {
         caffeineChart.update();
     }
 
-    // Initialize chart with data
-    updateChart();
-});
+    function updateDrinkList() {
+        const drinks = JSON.parse(localStorage.getItem("drinks")) || [];
+        drinksUL.innerHTML = "";
+
+        drinks.forEach((drink, index) => {
+            const drinkTime = new Date(drink.time);
+            const formattedTime = `${drinkTime.getHours()}:${String(drinkTime.getMinutes()).padStart(2, '0')}`;
+            const listItem = document.createElement("li");
+            listItem.innerHTML = `<strong>${drink.name}</strong> - Volume: ${drink.volume} ml - Caffeine: ${drink.caffeine.toFixed(2)} mg - Time: ${formattedTime}`;
+            
+            const removeButton = document.createElement("button");
+            removeButton.textContent = "Remove";
+            removeButton.classList.add("remove-button");
+            removeButton.addEventListener("click", () => {
+                drinks.splice(index, 1); // Remove the drink from the array
+                localStorage.setItem("drinks", JSON.stringify(drinks)); // Update local storage
+                updateDrinkList(); // Update the displayed list
+                updateChart(); // Update the chart after removing a drink
+            });
+            
+            listItem.appendChild(removeButton);
+            drinksUL.appendChild(listItem);
+        });
+
+        // Show or hide the clear list button based on whether there are logged drinks
+        clearListButton.style.display = drinks.length > 0 ? "block" : "none";
+    }
+
+    // Initialize chart and drink
