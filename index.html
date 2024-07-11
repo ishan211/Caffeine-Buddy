@@ -30,8 +30,13 @@
             <input type="time" id="time" required>
             <button type="submit">Add Drink</button>
         </form>
+        <div id="drink-list" class="hidden">
+            <h2>Logged Drinks</h2>
+            <ul id="drinks-ul"></ul>
+            <button id="clear-list">Clear List</button>
+        </div>
         <canvas id="caffeine-chart"></canvas>
-        <button id="reset-button">Reset</button>
+        <button id="toggle-list">Show List</button>
     </div>
     <script src="script.js"></script>
 </body>
