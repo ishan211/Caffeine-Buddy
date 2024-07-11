@@ -1,45 +1,33 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
+#drink-list {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #ccc;
+}
+
+#drinks-ul {
+    list-style-type: none;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
 }
 
-.container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 300px;
-    text-align: center;
-}
-
-form {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-input, select, button {
-    width: 100%;
-    padding: 8px;
+#drinks-ul li {
     margin-bottom: 10px;
-    border: 1px solid #ddd;
+}
+
+#clear-list {
+    display: block;
+    margin-top: 10px;
+    padding: 8px;
+    background-color: #f44336;
+    color: #fff;
+    border: none;
     border-radius: 4px;
+    cursor: pointer;
+}
+
+#clear-list:hover {
+    background-color: #d32f2f;
 }
 
 .hidden {
     display: none;
-}
-
-canvas {
-    width: 100% !important;
-    height: auto !important;
 }
