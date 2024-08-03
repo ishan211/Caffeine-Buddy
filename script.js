@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         data: {
             labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
             datasets: [{
-                label: 'Caffeine Concentration (mg/L)',
+                label: 'Total Caffeine (mg)',
                 data: new Array(24).fill(0),
                 borderColor: 'rgba(75, 192, 192, 1)',
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 y: {
                     title: {
                         display: true,
-                        text: 'Caffeine Concentration (mg/L)'
+                        text: 'Total Caffeine (mg)'
                     },
                     suggestedMin: 0 // Ensure the y-axis starts at 0
                 }
@@ -46,7 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    const caffeineHalfLife = 5; // Caffeine half-life in hours
+    const caffeineHalfLife = 5.7; // Caffeine half-life in hours
+    const volumeOfDistribution = 0.6; // Example volume of distribution in liters/kg, modify as needed
+    const bodyWeight = 70; // Example body weight in kg, modify as needed
 
     // Event Listeners
     drinkSelect.addEventListener("change", () => {
@@ -120,22 +122,23 @@ document.addEventListener("DOMContentLoaded", () => {
         const hoursInDay = 24;
 
         // Reset data
-        const concentrations = new Array(hoursInDay).fill(0);
+        const totalCaffeinePerHour = new Array(hoursInDay).fill(0);
 
         drinks.forEach(drink => {
             const drinkTime = new Date(drink.time);
             const drinkHour = drinkTime.getHours();
             const hoursSinceDrink = (now - drinkTime) / (1000 * 60 * 60); // Time difference in hours
 
-            // Accumulate concentrations forward from drink time to end of day
+            // Calculate caffeine amount using the formula C(t) = C_0 * (0.5^(t/t_half))
+            const initialConcentration = drink.caffeine; // Initial caffeine in mg
             for (let i = drinkHour; i < hoursInDay; i++) {
                 const hoursElapsed = i - drinkHour;
-                const caffeineLeft = drink.caffeine * Math.pow(0.5, hoursElapsed / caffeineHalfLife);
-                concentrations[i] += caffeineLeft;
+                const caffeineAmount = initialConcentration * Math.pow(0.5, hoursElapsed / caffeineHalfLife);
+                totalCaffeinePerHour[i] += caffeineAmount;
             }
         });
 
-        caffeineChart.data.datasets[0].data = concentrations;
+        caffeineChart.data.datasets[0].data = totalCaffeinePerHour;
         caffeineChart.update();
     }
 
@@ -179,8 +182,9 @@ document.addEventListener("DOMContentLoaded", () => {
         drinks.forEach(drink => {
             const drinkTime = new Date(drink.time);
             const hoursSinceDrink = (now - drinkTime) / (1000 * 60 * 60); // Time difference in hours
-            const caffeineLeft = drink.caffeine * Math.pow(0.5, hoursSinceDrink / caffeineHalfLife);
-            totalCaffeine += caffeineLeft;
+            const initialConcentration = (drink.caffeine) / (volumeOfDistribution * bodyWeight); // Initial caffeine in mg
+            const caffeineAmount = 42 * initialConcentration * Math.pow(0.5, hoursSinceDrink / caffeineHalfLife);
+            totalCaffeine += caffeineAmount;
         });
 
         currentCaffeineValue.textContent = totalCaffeine.toFixed(2);
