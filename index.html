@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drink Logger</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Caffeine Buddy</title>
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Drink Logger</h1>
+        <h1>Caffeine Buddy</h1>
+        <img src="caffeine_buddy_logo.png" alt="Caffeine Molecule Clipart" width="115" height="115">
         <form id="drink-form">
+            <div id="current-caffeine">
+                <h3>Current Caffeine: <span id="current-caffeine-value">0</span> mg</h3>
+            </div>
             <label for="drink">Drink:</label>
             <select id="drink">
                 <option value="coffee">Coffee</option>
@@ -30,19 +34,14 @@
             <input type="time" id="time" required>
             <button type="submit">Add Drink</button>
         </form>
+        <button id="toggle-list">Show List</button>
         <div id="drink-list" class="hidden">
             <h2>Logged Drinks</h2>
             <ul id="drinks-ul"></ul>
             <button id="clear-list">Clear List</button>
         </div>
-        
-        <!-- Add this section for current caffeine level -->
-        <div id="current-caffeine">
-            <h2>Current Caffeine: <span id="current-caffeine-value">0</span> mg/L</h2>
-        </div>
 
         <canvas id="caffeine-chart"></canvas>
-        <button id="toggle-list">Show List</button>
     </div>
     <script src="script.js"></script>
 </body>
