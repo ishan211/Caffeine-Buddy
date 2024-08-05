@@ -10,7 +10,6 @@
 <body>
     <div class="container">
         <h1>Caffeine Buddy</h1>
-        <img src="caffeine_buddy_logo.png" alt="Caffeine Molecule Clipart" width="115" height="115">
         <form id="drink-form">
             <div id="current-caffeine">
                 <h3>Current Caffeine: <span id="current-caffeine-value">0</span> mg</h3>
@@ -39,6 +38,16 @@
             <h2>Logged Drinks</h2>
             <ul id="drinks-ul"></ul>
             <button id="clear-list">Clear List</button>
+        </div>
+        
+        <!-- New button and collapsible form -->
+        <button id="toggle-settings">Adjust Settings</button>
+        <div id="settings-form" class="hidden">
+            <label for="body-weight">Body Weight (kg):</label>
+            <input type="number" id="body-weight" placeholder="70">
+            <label for="volume-of-distribution">Volume of Distribution (L/kg):</label>
+            <input type="number" id="volume-of-distribution" step="0.01" placeholder="0.6">
+            <button id="save-settings">Save Settings</button>
         </div>
 
         <canvas id="caffeine-chart"></canvas>
